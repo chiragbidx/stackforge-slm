@@ -1,20 +1,14 @@
 "use client";
 
-import { DashboardContent } from "@/components/dashboard/dashboard-content";
-
-// Purpose: Client UI for /dashboard.
-// Use this file for interactive/dashboard presentation logic.
-
-type ClientProps = {
-  greeting: string;
-  firstName: string;
-};
-
-export default function Client({ greeting, firstName }: ClientProps) {
+export default function Client() {
   return (
-    <DashboardContent
-      greeting={greeting}
-      firstName={firstName}
-    />
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        Welcome to LeadSync
+      </h1>
+      <p className="text-muted-foreground">
+        Your sales workflow, simplified. Get started by adding your first lead or importing contacts.
+      </p>
+    </div>
   );
 }
