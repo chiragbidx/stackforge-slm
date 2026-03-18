@@ -21,15 +21,6 @@ import {
   signUpWithPassword,
 } from "./actions";
 
-// Purpose: Client UI for /auth.
-// Use this file for auth mode toggles, form interactivity, and browser-only logic.
-//
-// Replication pattern for new interactive pages:
-// - Keep server mutations in `actions.ts`.
-// - Bind actions here with `useActionState`.
-// - Use local state only for presentation/interaction (tabs, steps, toggles).
-// - Keep forms simple: collect inputs and submit to a server action.
-
 type AuthMode = "signin" | "signup";
 
 type ClientProps = {
@@ -44,13 +35,8 @@ const initialActionState: AuthActionState = {
 };
 
 export default function Client({ redirectTo, flashStatus, flashMessage }: ClientProps) {
-  // UI state: only controls which form is shown.
   const [mode, setMode] = useState<AuthMode>("signin");
 
-  // Server action wiring:
-  // - `state` carries serializable feedback (error/success message).
-  // - `action` is assigned directly to form `action={...}`.
-  // - `pending` drives submit button loading state.
   const [signInState, signInAction, signInPending] = useActionState(
     signInWithPassword,
     initialActionState
@@ -69,7 +55,6 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
     }
   }, [activeState._devUrl]);
 
-  // URL hash keeps the auth mode linkable (`/auth#signin` or `/auth#signup`).
   useEffect(() => {
     const syncFromHash = () => {
       const hash = window.location.hash.replace("#", "").toLowerCase();
@@ -89,19 +74,18 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
   };
 
   const content = useMemo(() => {
-    // View-model for mode-specific heading/description copy.
     if (mode === "signup") {
       return {
         id: "signup",
-        title: "Create account",
-        description: "Start your free account in less than a minute.",
+        title: "Create your LeadSync account",
+        description: "Sign up to start managing your leads and growing your sales pipeline."
       };
     }
 
     return {
       id: "signin",
-      title: "Sign in",
-      description: "Use your email and password to continue.",
+      title: "Sign in to LeadSync",
+      description: "Continue to your LeadSync workspace."
     };
   }, [mode]);
 
@@ -113,21 +97,20 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
           <div className="relative z-10 flex h-full flex-col justify-between">
             <div className="space-y-4">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">
-                Panda Access
+                Welcome to LeadSync
               </p>
               <h1 className="max-w-sm text-4xl font-semibold leading-tight tracking-tight">
-                Launch faster with one workspace for your team.
+                Modern CRM for small teams to close more sales.
               </h1>
               <p className="max-w-md text-sm text-muted-foreground">
-                Secure auth, polished interface, and a clean onboarding flow built
-                for production teams.
+                Secure, simple, and ready for your sales workflow.
               </p>
             </div>
 
             <div className="relative overflow-hidden rounded-2xl border border-secondary/70 bg-background/80 p-3 shadow-lg">
               <Image
                 src="/demo-img.jpg"
-                alt="Panda product preview"
+                alt="LeadSync CRM product preview"
                 className="h-full w-full rounded-xl object-cover"
                 width={1200}
                 height={900}
@@ -149,7 +132,7 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Sign in
+                  Sign In
                 </button>
                 <button
                   type="button"
@@ -160,7 +143,7 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Sign up
+                  Sign Up
                 </button>
               </div>
 
@@ -184,7 +167,6 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
               ) : null}
 
               {mode === "signin" ? (
-                // Sign-in form submits directly to server action.
                 <form className="space-y-4" action={signInAction}>
                   {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
                   <div className="space-y-2">
@@ -196,6 +178,7 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
                       placeholder="you@company.com"
                       required
                     />
+                    <span className="text-xs text-muted-foreground">We'll never share your email.</span>
                   </div>
 
                   <div className="space-y-2">
@@ -215,21 +198,20 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
                   </div>
 
                   <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending ? "Signing in..." : "Sign in"}
+                    {isPending ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
               ) : (
-                // Sign-up form submits directly to server action.
                 <form className="space-y-4" action={signUpAction}>
                   {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="signup-first-name">First name</Label>
-                      <Input id="signup-first-name" name="firstName" placeholder="Chirag" required />
+                      <Input id="signup-first-name" name="firstName" placeholder="Your first name" required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="signup-last-name">Last name</Label>
-                      <Input id="signup-last-name" name="lastName" placeholder="Dodiya" required />
+                      <Input id="signup-last-name" name="lastName" placeholder="Your last name" required />
                     </div>
                   </div>
 
@@ -242,6 +224,7 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
                       placeholder="you@company.com"
                       required
                     />
+                    <span className="text-xs text-muted-foreground">We'll never share your email.</span>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -268,7 +251,7 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
                   </div>
 
                   <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending ? "Creating account..." : "Create account"}
+                    {isPending ? "Creating account..." : "Sign Up"}
                   </Button>
                 </form>
               )}
@@ -284,6 +267,32 @@ export default function Client({ redirectTo, flashStatus, flashMessage }: Client
                   {activeState.message}
                 </p>
               ) : null}
+
+              <div className="mt-6 flex flex-col space-y-2 text-center">
+                <Button variant="outline" className="w-full" disabled>
+                  <span className="mr-2">🔒</span> Continue with Google
+                </Button>
+                <Button variant="outline" className="w-full" disabled>
+                  <span className="mr-2">🔒</span> Continue with Microsoft
+                </Button>
+              </div>
+              
+              <div className="flex flex-col space-y-2 text-sm text-center pt-4">
+                {mode === "signin" ? (
+                  <>
+                    <span>Don't have an account? <button type="button" className="text-primary underline" onClick={() => setModeWithHash("signup")}>Sign up for LeadSync</button></span>
+                  </>
+                ) : (
+                  <>
+                    <span>Already have an account? <button type="button" className="text-primary underline" onClick={() => setModeWithHash("signin")}>Sign in</button></span>
+                  </>
+                )}
+                {mode === "signin" && (
+                  <span className="text-xs text-muted-foreground pt-1">
+                    Enter your email to receive a password reset link.
+                  </span>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
